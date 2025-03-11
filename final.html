@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopMart Blind Box</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #8B5A2B;
+            overflow: hidden;
+            margin: 0;
+            position: relative;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        img, video {
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+            border: 5px solid white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.8);
+        }
+
+        .instruction {
+            font-size: 42px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: white;
+            text-shadow: 4px 4px 6px black, -4px -4px 6px black;
+        }
+
+        .star {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #C0C0C0;
+            opacity: 0;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #C0C0C0;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .glitter {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 10%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            animation: glitterFade 1.5s ease-out;
+        }
+
+        @keyframes glitterFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        #countdown {
+            font-size: 60px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img id="blindbox-button" src="Button.jpg" alt="Open Blind Box" onclick="startCountdown()">
+        <div id="clickText" class="instruction">Click Here to Open</div>
+
+        <div id="countdown" class="hidden">3</div>
+
+        <video id="blindbox-video" class="hidden" src="Prize.mp4" controls></video>
+
+        <img id="ownership-card" class="hidden" src="Patricia.jpg" alt="Ownership Card">
+    </div>
+
+    <audio id="yeheyy-sound" src="Yeheyy.mp3"></audio>
+
+    <script>
+        function startCountdown() {
+            let button = document.getElementById("blindbox-button");
+            let clickText = document.getElementById("clickText");
+            let countdown = document.getElementById("countdown");
+
+            button.classList.add("hidden");
+            clickText.classList.add("hidden");
+
+            countdown.classList.remove("hidden");
+            let count = 3;
+            countdown.innerText = count;
+
+            let interval = setInterval(() => {
+                count--;
+                countdown.innerText = count;
+                if (count === 0) {
+                    clearInterval(interval);
+                    countdown.classList.add("hidden");
+
+                    setTimeout(() => {
+                        addGlitter();
+                        playVideo();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function playVideo() {
+            let video = document.getElementById("blindbox-video");
+            video.classList.remove("hidden");
+            video.play();
+
+            video.onended = function () {
+                setTimeout(() => {
+                    addGlitter();
+                    video.classList.add("hidden");
+
+                    setTimeout(() => {
+                        document.getElementById("ownership-card").classList.remove("hidden");
+
+                        setTimeout(() => {
+                            addGlitter();
+                            document.getElementById("blindbox-video").classList.remove("hidden");
+
+                            // Play "Yeheyy" sound at the very last moment
+                            document.getElementById("yeheyy-sound").play();
+                        }, 3000);
+                    }, 3000);
+                }, 3000);
+            };
+        }
+
+        function addGlitter() {
+            let glitter = document.createElement("div");
+            glitter.classList.add("glitter");
+            document.body.appendChild(glitter);
+            setTimeout(() => glitter.remove(), 1500);
+        }
+
+        function startStarEffect() {
+            setInterval(() => {
+                let star = document.createElement("div");
+                star.classList.add("star");
+
+                star.style.left = `${Math.random() * window.innerWidth}px`;
+                star.style.top = `${Math.random() * window.innerHeight}px`;
+                star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+
+                document.body.appendChild(star);
+                setTimeout(() => { star.remove(); }, 4000);
+            }, 250);
+        }
+
+        window.onload = startStarEffect;
+    </script>
+
+</body>
+</html>
